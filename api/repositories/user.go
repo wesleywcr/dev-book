@@ -68,8 +68,8 @@ func (repository Users) Search(nameOrNickname string) ([]models.User, error) {
 
 }
 
-func (repostory Users) SearchPerId(ID uint64) (models.User, error) {
-	rows, error := repostory.db.Query(
+func (repository Users) SearchPerId(ID uint64) (models.User, error) {
+	rows, error := repository.db.Query(
 		"select id, name, nickname, email, created_at from users where id = ?", ID,
 	)
 
@@ -93,4 +93,18 @@ func (repostory Users) SearchPerId(ID uint64) (models.User, error) {
 		}
 	}
 	return user, nil
+}
+
+func (repository Users) Update(ID uint64, user models.User) error {
+	statement, error := repository.db.Prepare(
+		"update users set name = ?, nickname = ?, email = ?, where id = ?",
+	)
+	if error != nil {
+		return error
+	}
+	defer statement.Close()
+	if _, error := statement.Exec(user.Name, user.Nickname, user.Email, ID); error != nil {
+		return error
+	}
+	return nil
 }
