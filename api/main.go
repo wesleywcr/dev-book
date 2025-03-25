@@ -5,12 +5,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/wesleywcr/dev-book/api/config"
 	"github.com/wesleywcr/dev-book/api/router"
 )
 
 func main() {
-	fmt.Println("Server ON 5000")
+	config.Loading()
+
 	r := router.InitRouter()
 
-	log.Fatal(http.ListenAndServe(":5000", r))
+	fmt.Printf("Server ON %d\n", config.Port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), r))
 }
