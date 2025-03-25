@@ -15,7 +15,7 @@ type User struct {
 	Created_at time.Time `json:"created_at,omitempty"`
 }
 
-func (user *User) validate() error {
+func (user *User) validate(step string) error {
 	if user.Name == "" {
 		return errors.New("O nome é um campo obrigatório")
 	}
@@ -25,15 +25,16 @@ func (user *User) validate() error {
 	if user.Email == "" {
 		return errors.New("E-mail é um campo  obrigatório")
 	}
-	if user.Password == "" {
+	if step == "register" && user.Password == "" {
 		return errors.New("Senha é um campo obrigatório")
 	}
+
 	return nil
 }
 
 // validate and format user
-func (user *User) Prepare() error {
-	if error := user.validate(); error != nil {
+func (user *User) Prepare(step string) error {
+	if error := user.validate(step); error != nil {
 		return error
 	}
 	user.formatted()
