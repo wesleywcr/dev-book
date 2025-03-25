@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/badoux/checkmail"
+	"github.com/wesleywcr/dev-book/api/security"
 )
 
 type User struct {
@@ -44,12 +45,23 @@ func (user *User) Prepare(step string) error {
 	if error := user.validate(step); error != nil {
 		return error
 	}
-	user.formatted()
+	if error := user.formatted(step); error != nil {
+		return error
+	}
 	return nil
 }
 
-func (user *User) formatted() {
+func (user *User) formatted(step string) error {
 	user.Name = strings.TrimSpace(user.Name)
 	user.Nickname = strings.TrimSpace(user.Nickname)
 	user.Email = strings.TrimSpace(user.Email)
+
+	if step == "register" {
+		passwordWithHash, error := security.Hash(user.Password)
+		if error != nil {
+			return error
+		}
+		user.Password = string(passwordWithHash)
+	}
+	return nil
 }
