@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"strings"
+	"time"
+)
 
 type User struct {
 	ID         uint64    `json:"id,omitempty"`
@@ -9,4 +13,35 @@ type User struct {
 	Email      string    `json:"email,omitempty"`
 	Password   string    `json:"password,omitempty"`
 	Created_at time.Time `json:"created_at,omitempty"`
+}
+
+func (user *User) validate() error {
+	if user.Name == "" {
+		return errors.New("O nome é um campo obrigatório")
+	}
+	if user.Nickname == "" {
+		return errors.New("Nickname é um campo obrigatório")
+	}
+	if user.Email == "" {
+		return errors.New("E-mail é um campo  obrigatório")
+	}
+	if user.Password == "" {
+		return errors.New("Senha é um campo obrigatório")
+	}
+	return nil
+}
+
+// validate and format user
+func (user *User) Prepare() error {
+	if error := user.validate(); error != nil {
+		return error
+	}
+	user.formatted()
+	return nil
+}
+
+func (user *User) formatted() {
+	user.Name = strings.TrimSpace(user.Name)
+	user.Nickname = strings.TrimSpace(user.Nickname)
+	user.Email = strings.TrimSpace(user.Email)
 }
