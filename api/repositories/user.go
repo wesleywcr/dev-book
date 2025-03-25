@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/wesleywcr/dev-book/api/models"
 )
@@ -34,4 +35,62 @@ func (repository Users) Create(user models.User) (uint64, error) {
 		return 0, error
 	}
 	return uint64(lastInsertId), nil
+}
+
+func (repository Users) Search(nameOrNickname string) ([]models.User, error) {
+	nameOrNickname = fmt.Sprintf("%%%s%%", nameOrNickname) // %nameOrNickname%
+
+	rows, error := repository.db.Query(
+		"select id, name, nickname, email, created_at from users where name LIKE ? or nickname LIKE ?",
+		nameOrNickname, nameOrNickname,
+	)
+	if error != nil {
+		return nil, error
+	}
+	defer rows.Close()
+
+	var users []models.User
+
+	for rows.Next() {
+		var user models.User
+		if error = rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Nickname,
+			&user.Email,
+			&user.Created_at,
+		); error != nil {
+			return nil, error
+		}
+		users = append(users, user)
+	}
+	return users, nil
+
+}
+
+func (repostory Users) SearchPerId(ID uint64) (models.User, error) {
+	rows, error := repostory.db.Query(
+		"select id, name, nickname, email, created_at from users where id = ?", ID,
+	)
+
+	if error != nil {
+		return models.User{}, error
+	}
+
+	defer rows.Close()
+
+	var user models.User
+
+	if rows.Next() {
+		if error = rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Nickname,
+			&user.Email,
+			&user.Created_at,
+		); error != nil {
+			return models.User{}, error
+		}
+	}
+	return user, nil
 }
