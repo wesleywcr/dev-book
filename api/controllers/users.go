@@ -2,12 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/wesleywcr/dev-book/api/auth"
 	"github.com/wesleywcr/dev-book/api/db"
 	"github.com/wesleywcr/dev-book/api/models"
 	"github.com/wesleywcr/dev-book/api/repositories"
@@ -107,6 +109,16 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userIdToken, error := auth.ExtractUserId(r)
+	if error != nil {
+		response.Error(w, http.StatusUnauthorized, error)
+		return
+	}
+	if userId != userIdToken {
+		response.Error(w, http.StatusForbidden, errors.New("Não é possível atualizar um usuário que não é o seu"))
+		return
+	}
+
 	bodyRequest, error := io.ReadAll(r.Body)
 	if error != nil {
 		response.Error(w, http.StatusUnprocessableEntity, error)
@@ -147,6 +159,16 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userId, error := strconv.ParseUint(parameters["userId"], 10, 64)
 	if error != nil {
 		response.Error(w, http.StatusBadRequest, error)
+		return
+	}
+
+	userIdToken, error := auth.ExtractUserId(r)
+	if error != nil {
+		response.Error(w, http.StatusUnauthorized, error)
+		return
+	}
+	if userId != userIdToken {
+		response.Error(w, http.StatusForbidden, errors.New("Não é possível deletar um usuário que não é o seu"))
 		return
 	}
 
