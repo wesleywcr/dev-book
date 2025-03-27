@@ -14,6 +14,7 @@ import (
 	"github.com/wesleywcr/dev-book/api/models"
 	"github.com/wesleywcr/dev-book/api/repositories"
 	"github.com/wesleywcr/dev-book/api/response"
+	"github.com/wesleywcr/dev-book/api/security"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -306,4 +307,64 @@ func SearchFollowing(w http.ResponseWriter, r *http.Request) {
 	}
 	response.JSON(w, http.StatusOK, users)
 
+}
+
+func UpdatePassword(w http.ResponseWriter, r *http.Request) {
+
+	userIdToken, error := auth.ExtractUserId(r)
+	if error != nil {
+		response.Error(w, http.StatusUnauthorized, error)
+		return
+	}
+
+	parameters := mux.Vars(r)
+	userId, error := strconv.ParseUint(parameters["userId"], 10, 64)
+	if error != nil {
+		response.Error(w, http.StatusBadRequest, error)
+		return
+	}
+	if userIdToken != userId {
+		response.Error(w, http.StatusForbidden, errors.New("Não é possível atualizar senha de um usuário que não seja o seu"))
+		return
+	}
+
+	bodyRequest, error := io.ReadAll(r.Body)
+
+	var password models.Password
+
+	if error = json.Unmarshal(bodyRequest, &password); error != nil {
+		response.Error(w, http.StatusBadRequest, error)
+		return
+	}
+
+	db, error := db.ConnectDB()
+	if error != nil {
+		response.Error(w, http.StatusInternalServerError, error)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewRepositoryOfUsers(db)
+
+	passwordSavedDB, error := repository.GetPassword(userId)
+	if error != nil {
+		response.Error(w, http.StatusInternalServerError, error)
+		return
+	}
+	if error = security.VerificatedPassoword(passwordSavedDB, password.Current); error != nil {
+		response.Error(w, http.StatusInternalServerError, errors.New("A senha atual está incorreta"))
+		return
+	}
+
+	passwordWithHash, error := security.Hash(password.New)
+	if error != nil {
+		response.Error(w, http.StatusBadRequest, error)
+		return
+	}
+
+	if error := repository.UpdatePassword(userId, string(passwordWithHash)); error != nil {
+		response.Error(w, http.StatusInternalServerError, error)
+		return
+	}
+	response.JSON(w, http.StatusNoContent, nil)
 }
