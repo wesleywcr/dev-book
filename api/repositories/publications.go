@@ -152,3 +152,34 @@ func (repository Publications) SearchPublicationByUserId(userId uint64) ([]model
 	}
 	return publications, nil
 }
+
+func (repository Publications) Like(publicationId uint64) error {
+	statement, error := repository.db.Prepare(`update publications set likes = likes + 1 where id = ?`)
+	if error != nil {
+		return error
+	}
+	defer statement.Close()
+	if _, error := statement.Exec(publicationId); error != nil {
+		return error
+	}
+	return nil
+}
+
+func (repository Publications) Deslike(publicationId uint64) error {
+	statement, error := repository.db.Prepare(`
+	update publications set likes = 
+	CASE 
+		WHEN likes > 0 THEN likes - 1
+		ELSE 0 
+	END 
+	where id = ?
+`)
+	if error != nil {
+		return error
+	}
+	defer statement.Close()
+	if _, error := statement.Exec(publicationId); error != nil {
+		return error
+	}
+	return nil
+}

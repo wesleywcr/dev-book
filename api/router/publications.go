@@ -43,4 +43,16 @@ var routesPublications = []Route{
 		HandleFunction:        controllers.SearchPublicationsByUserId,
 		RequiredAuthorization: true,
 	},
+	{
+		URI:                   "/publications/{publicationId}/like",
+		Method:                http.MethodPost,
+		HandleFunction:        controllers.LikePublication,
+		RequiredAuthorization: true,
+	},
+	{
+		URI:                   "/publications/{publicationId}/deslike",
+		Method:                http.MethodPost,
+		HandleFunction:        controllers.DeslikePublication,
+		RequiredAuthorization: true,
+	},
 }
