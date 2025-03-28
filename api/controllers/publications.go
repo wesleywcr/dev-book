@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/wesleywcr/dev-book/api/auth"
 	"github.com/wesleywcr/dev-book/api/db"
 	"github.com/wesleywcr/dev-book/api/models"
@@ -53,10 +55,49 @@ func CreatePublication(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusCreated, publication)
 }
 func GetPublications(w http.ResponseWriter, r *http.Request) {
+	parameters := mux.Vars(r)
+	publicationId, error := strconv.ParseUint(parameters["publicationId"], 10, 64)
+	if error != nil {
+		response.Error(w, http.StatusBadRequest, error)
+		return
+	}
+	db, error := db.ConnectDB()
+	if error != nil {
+		response.Error(w, http.StatusInternalServerError, error)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewRepositoryOfPublications(db)
+	publication, error := repository.SearchById(publicationId)
+	if error != nil {
+		response.Error(w, http.StatusInternalServerError, error)
+		return
+	}
+
+	response.JSON(w, http.StatusOK, publication)
 
 }
 func SearchPublication(w http.ResponseWriter, r *http.Request) {
+	userId, error := auth.ExtractUserId(r)
+	if error != nil {
+		response.Error(w, http.StatusBadRequest, error)
+		return
+	}
+	db, error := db.ConnectDB()
+	if error != nil {
+		response.Error(w, http.StatusInternalServerError, error)
+		return
+	}
+	defer db.Close()
 
+	repository := repositories.NewRepositoryOfPublications(db)
+	publications, error := repository.Search(userId)
+	if error != nil {
+		response.Error(w, http.StatusInternalServerError, error)
+		return
+	}
+	response.JSON(w, http.StatusOK, publications)
 }
 func Updateublication(w http.ResponseWriter, r *http.Request) {
 
