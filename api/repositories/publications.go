@@ -64,6 +64,7 @@ func (repository Publications) SearchById(publicationId uint64) (models.Publicat
 	}
 	return publication, nil
 }
+
 func (repository Publications) Search(userId uint64) ([]models.Publication, error) {
 	rows, error := repository.db.Query(`
 	select distinct p.*, u.nickname from publications p
@@ -95,4 +96,29 @@ func (repository Publications) Search(userId uint64) ([]models.Publication, erro
 		publications = append(publications, publication)
 	}
 	return publications, nil
+}
+
+func (repository Publications) Update(publicationId uint64, publication models.Publication) error {
+	statement, error := repository.db.Prepare("update publications set title = ?, content = ?, where id = ?")
+	if error != nil {
+		return error
+	}
+	defer statement.Close()
+
+	if _, error := statement.Exec(publication.Title, publication.Content, publicationId); error != nil {
+		return error
+	}
+	return nil
+}
+
+func (repository Publications) Delete(publicationId uint64) error {
+	statement, error := repository.db.Prepare("delete from publications where id = ? ")
+	if error != nil {
+		return error
+	}
+	defer statement.Close()
+	if _, error := statement.Exec(publicationId); error != nil {
+		return error
+	}
+	return nil
 }
