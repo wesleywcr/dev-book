@@ -71,7 +71,7 @@ func GetPublications(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repository := repositories.NewRepositoryOfPublications(db)
-	publication, error := repository.SearchById(publicationId)
+	publication, error := repository.SearchPublicationsById(publicationId)
 	if error != nil {
 		response.Error(w, http.StatusInternalServerError, error)
 		return
@@ -125,7 +125,7 @@ func UpdatedPublication(w http.ResponseWriter, r *http.Request) {
 
 	repository := repositories.NewRepositoryOfPublications(db)
 
-	publicationSalvedDB, error := repository.SearchById(publicationId)
+	publicationSalvedDB, error := repository.SearchPublicationsById(publicationId)
 	if error != nil {
 		response.Error(w, http.StatusInternalServerError, error)
 		return
@@ -161,6 +161,7 @@ func UpdatedPublication(w http.ResponseWriter, r *http.Request) {
 
 	response.JSON(w, http.StatusNoContent, nil)
 }
+
 func DeletePublication(w http.ResponseWriter, r *http.Request) {
 	userId, error := auth.ExtractUserId(r)
 	if error != nil {
@@ -184,7 +185,7 @@ func DeletePublication(w http.ResponseWriter, r *http.Request) {
 
 	repository := repositories.NewRepositoryOfPublications(db)
 
-	publicationSalvedDB, error := repository.SearchById(publicationId)
+	publicationSalvedDB, error := repository.SearchPublicationsById(publicationId)
 	if error != nil {
 		response.Error(w, http.StatusInternalServerError, error)
 		return
@@ -200,4 +201,27 @@ func DeletePublication(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.JSON(w, http.StatusNoContent, nil)
+}
+
+func SearchPublicationsByUserId(w http.ResponseWriter, r *http.Request) {
+	parameters := mux.Vars(r)
+	userId, error := strconv.ParseUint(parameters["userId"], 10, 64)
+	if error != nil {
+		response.Error(w, http.StatusBadRequest, error)
+		return
+	}
+	db, error := db.ConnectDB()
+	if error != nil {
+		response.Error(w, http.StatusInternalServerError, error)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewRepositoryOfPublications(db)
+	publications, error := repository.SearchPublicationByUserId(userId)
+	if error != nil {
+		response.Error(w, http.StatusInternalServerError, error)
+		return
+	}
+	response.JSON(w, http.StatusOK, publications)
 }

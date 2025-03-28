@@ -28,13 +28,19 @@ var routesPublications = []Route{
 	{
 		URI:                   "/publications/{publicationId}",
 		Method:                http.MethodPut,
-		HandleFunction:        controllers.Updateublication,
+		HandleFunction:        controllers.UpdatedPublication,
 		RequiredAuthorization: true,
 	},
 	{
 		URI:                   "/publications/{publicationId}",
 		Method:                http.MethodDelete,
 		HandleFunction:        controllers.DeletePublication,
+		RequiredAuthorization: true,
+	},
+	{
+		URI:                   "/users/{userId}/publications",
+		Method:                http.MethodGet,
+		HandleFunction:        controllers.SearchPublicationsByUserId,
 		RequiredAuthorization: true,
 	},
 }

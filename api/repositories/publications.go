@@ -35,7 +35,7 @@ func (repository Publications) Create(publications models.Publication) (uint64, 
 	return uint64(lastIdInsert), nil
 }
 
-func (repository Publications) SearchById(publicationId uint64) (models.Publication, error) {
+func (repository Publications) SearchPublicationsById(publicationId uint64) (models.Publication, error) {
 	row, error := repository.db.Query(`
 	select p.*, p.nickname from 
 	publications p inner join users u
@@ -76,6 +76,7 @@ func (repository Publications) Search(userId uint64) ([]models.Publication, erro
 	if error != nil {
 		return nil, error
 	}
+	defer rows.Close()
 
 	var publications []models.Publication
 
@@ -121,4 +122,33 @@ func (repository Publications) Delete(publicationId uint64) error {
 		return error
 	}
 	return nil
+}
+func (repository Publications) SearchPublicationByUserId(userId uint64) ([]models.Publication, error) {
+	rows, error := repository.db.Query(`
+		select p.*, u.nickname from publications p
+		join users u on u.id = p.author_id 
+		where p.author_id = ?`, userId)
+	if error != nil {
+		return nil, error
+	}
+	defer rows.Close()
+	var publications []models.Publication
+
+	if rows.Next() {
+		var publication models.Publication
+
+		if error = rows.Scan(
+			&publication.ID,
+			&publication.Title,
+			&publication.Content,
+			&publication.AuthorID,
+			&publication.Likes,
+			&publication.Created_at,
+			&publication.AuthorNickaname,
+		); error != nil {
+			return nil, error
+		}
+		publications = append(publications, publication)
+	}
+	return publications, nil
 }
