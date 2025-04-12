@@ -100,6 +100,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: List publications
       tags:
       - Publications
@@ -137,6 +139,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Create a publication
       tags:
       - Publications
@@ -166,6 +170,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Delete a publication
       tags:
       - Publications
@@ -192,6 +198,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Get a publication
       tags:
       - Publications
@@ -228,7 +236,36 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Update a publication
+      tags:
+      - Publications
+  /publications/{publicationId}/deslike:
+    post:
+      description: Remove a like from a publication
+      parameters:
+      - description: Publication ID
+        in: path
+        name: publicationId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Unlike a publication
       tags:
       - Publications
   /publications/{publicationId}/like:
@@ -253,32 +290,9 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Like a publication
-      tags:
-      - Publications
-  /publications/{publicationId}/unlike:
-    post:
-      description: Remove a like from a publication
-      parameters:
-      - description: Publication ID
-        in: path
-        name: publicationId
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-      summary: Unlike a publication
       tags:
       - Publications
   /users:
@@ -302,6 +316,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: List all users
       tags:
       - Users
@@ -368,6 +384,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Delete a user
       tags:
       - Users
@@ -394,6 +412,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Get a user by ID
       tags:
       - Users
@@ -434,6 +454,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Update a user
       tags:
       - Users
@@ -467,6 +489,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Follow a user
       tags:
       - Users
@@ -496,6 +520,8 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Get followers
       tags:
       - Users
@@ -525,11 +551,79 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Get following users
       tags:
       - Users
-  /users/{userId}/password:
-    put:
+  /users/{userId}/publications:
+    get:
+      description: Retrieve all publications created by a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Publication'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Get publications by user
+      tags:
+      - Publications
+  /users/{userId}/unfollow:
+    post:
+      description: Stop following a user by their ID
+      parameters:
+      - description: User ID to unfollow
+        in: path
+        name: userId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Unfollow a user
+      tags:
+      - Users
+  /users/{userId}/update-password:
+    post:
       consumes:
       - application/json
       description: Change the password of a user
@@ -566,69 +660,15 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/response.ErrorResponse'
+      security:
+      - Bearer: []
       summary: Update password
       tags:
       - Users
-  /users/{userId}/publications:
-    get:
-      description: Retrieve all publications created by a specific user
-      parameters:
-      - description: User ID
-        in: path
-        name: userId
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Publication'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-      summary: Get publications by user
-      tags:
-      - Publications
-  /users/{userId}/unfollow:
-    post:
-      description: Stop following a user by their ID
-      parameters:
-      - description: User ID to unfollow
-        in: path
-        name: userId
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.ErrorResponse'
-      summary: Unfollow a user
-      tags:
-      - Users
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

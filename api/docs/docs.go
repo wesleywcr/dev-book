@@ -69,6 +69,11 @@ const docTemplate = `{
         },
         "/publications": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve all publications for the authenticated user",
                 "produces": [
                     "application/json"
@@ -102,6 +107,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Create a new publication for the authenticated user",
                 "consumes": [
                     "application/json"
@@ -160,6 +170,11 @@ const docTemplate = `{
         },
         "/publications/{publicationId}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve a publication by its ID",
                 "produces": [
                     "application/json"
@@ -199,6 +214,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Update a publication owned by the authenticated user",
                 "consumes": [
                     "application/json"
@@ -253,6 +273,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete a publication owned by the authenticated user",
                 "produces": [
                     "application/json"
@@ -295,46 +320,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/publications/{publicationId}/like": {
+        "/publications/{publicationId}/deslike": {
             "post": {
-                "description": "Add a like to a publication",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Publications"
-                ],
-                "summary": "Like a publication",
-                "parameters": [
+                "security": [
                     {
-                        "type": "integer",
-                        "description": "Publication ID",
-                        "name": "publicationId",
-                        "in": "path",
-                        "required": true
+                        "Bearer": []
                     }
                 ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/publications/{publicationId}/unlike": {
-            "post": {
                 "description": "Remove a like from a publication",
                 "produces": [
                     "application/json"
@@ -371,8 +363,56 @@ const docTemplate = `{
                 }
             }
         },
+        "/publications/{publicationId}/like": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Add a like to a publication",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Publications"
+                ],
+                "summary": "Like a publication",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Publication ID",
+                        "name": "publicationId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve a list of users filtered by name or nickname",
                 "produces": [
                     "application/json"
@@ -460,6 +500,11 @@ const docTemplate = `{
         },
         "/users/{userId}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve a user's details by their ID",
                 "produces": [
                     "application/json"
@@ -499,6 +544,11 @@ const docTemplate = `{
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Update the details of an existing user",
                 "consumes": [
                     "application/json"
@@ -559,6 +609,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Remove a user from the system",
                 "produces": [
                     "application/json"
@@ -609,6 +664,11 @@ const docTemplate = `{
         },
         "/users/{userId}/follow": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Follow another user by their ID",
                 "produces": [
                     "application/json"
@@ -659,6 +719,11 @@ const docTemplate = `{
         },
         "/users/{userId}/followers": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve a list of users following a specific user",
                 "produces": [
                     "application/json"
@@ -703,6 +768,11 @@ const docTemplate = `{
         },
         "/users/{userId}/following": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve a list of users a specific user is following",
                 "produces": [
                     "application/json"
@@ -745,70 +815,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/{userId}/password": {
-            "put": {
-                "description": "Change the password of a user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Update password",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "userId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Password data",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Password"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/users/{userId}/publications": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retrieve all publications created by a specific user",
                 "produces": [
                     "application/json"
@@ -853,6 +866,11 @@ const docTemplate = `{
         },
         "/users/{userId}/unfollow": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Stop following a user by their ID",
                 "produces": [
                     "application/json"
@@ -868,6 +886,73 @@ const docTemplate = `{
                         "name": "userId",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{userId}/update-password": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Change the password of a user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update password",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "userId",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Password data",
+                        "name": "password",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Password"
+                        }
                     }
                 ],
                 "responses": {
@@ -970,6 +1055,14 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
