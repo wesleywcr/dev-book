@@ -13,6 +13,18 @@ import (
 	"github.com/wesleywcr/dev-book/api/security"
 )
 
+// Login authenticates a user and returns a token.
+// @Summary User login
+// @Description Authenticate a user and return a JWT token
+// @Tags Authentication
+// @Accept json
+// @Produce plain
+// @Param credentials body models.User true "User credentials"
+// @Success 200 {string} string "JWT Token"
+// @Failure 422 {object} response.ErrorResponse
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /login [post]
 func Login(w http.ResponseWriter, r *http.Request) {
 	bodyRequest, error := io.ReadAll(r.Body)
 	if error != nil {

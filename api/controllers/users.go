@@ -17,6 +17,18 @@ import (
 	"github.com/wesleywcr/dev-book/api/security"
 )
 
+// CreateUser creates a new user.
+// @Summary Create a new user
+// @Description Register a new user in the system
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user body models.User true "User data"
+// @Success 201 {object} models.User
+// @Failure 422 {object} response.ErrorResponse
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /users [post]
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	bodyRequest, error := io.ReadAll(r.Body)
 
@@ -53,6 +65,16 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusCreated, user)
 
 }
+
+// ListUsers retrieves all users.
+// @Summary List all users
+// @Description Retrieve a list of users filtered by name or nickname
+// @Tags Users
+// @Produce json
+// @Param user query string false "Name or nickname to filter"
+// @Success 200 {array} models.User
+// @Failure 500 {object} response.ErrorResponse
+// @Router /users [get]
 func ListUsers(w http.ResponseWriter, r *http.Request) {
 	nameOrNickname := strings.ToLower(r.URL.Query().Get("user"))
 
@@ -74,6 +96,16 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, users)
 }
 
+// ListUser retrieves a specific user by ID.
+// @Summary Get a user by ID
+// @Description Retrieve a user's details by their ID
+// @Tags Users
+// @Produce json
+// @Param userId path int true "User ID"
+// @Success 200 {object} models.User
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /users/{userId} [get]
 func ListUser(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
@@ -101,6 +133,20 @@ func ListUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// UpdateUser updates a user's information.
+// @Summary Update a user
+// @Description Update the details of an existing user
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param userId path int true "User ID"
+// @Param user body models.User true "Updated user data"
+// @Success 204 "No Content"
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 401 {object} response.ErrorResponse
+// @Failure 403 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /users/{userId} [put]
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
@@ -154,6 +200,18 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// DeleteUser deletes a user.
+// @Summary Delete a user
+// @Description Remove a user from the system
+// @Tags Users
+// @Produce json
+// @Param userId path int true "User ID"
+// @Success 204 "No Content"
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 401 {object} response.ErrorResponse
+// @Failure 403 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /users/{userId} [delete]
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
@@ -189,6 +247,18 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// FollowUser allows a user to follow another user.
+// @Summary Follow a user
+// @Description Follow another user by their ID
+// @Tags Users
+// @Produce json
+// @Param userId path int true "User ID to follow"
+// @Success 204 "No Content"
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 401 {object} response.ErrorResponse
+// @Failure 403 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /users/{userId}/follow [post]
 func FollowUser(w http.ResponseWriter, r *http.Request) {
 	followerId, error := auth.ExtractUserId(r)
 	if error != nil {
@@ -222,6 +292,19 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusNoContent, nil)
 
 }
+
+// UnFollowUser allows a user to unfollow another user.
+// @Summary Unfollow a user
+// @Description Stop following a user by their ID
+// @Tags Users
+// @Produce json
+// @Param userId path int true "User ID to unfollow"
+// @Success 204 "No Content"
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 401 {object} response.ErrorResponse
+// @Failure 403 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /users/{userId}/unfollow [post]
 func UnFollowUser(w http.ResponseWriter, r *http.Request) {
 	followerId, error := auth.ExtractUserId(r)
 	if error != nil {
@@ -256,6 +339,17 @@ func UnFollowUser(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusNoContent, nil)
 
 }
+
+// SearchFollowers retrieves the followers of a user.
+// @Summary Get followers
+// @Description Retrieve a list of users following a specific user
+// @Tags Users
+// @Produce json
+// @Param userId path int true "User ID"
+// @Success 200 {array} models.User
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /users/{userId}/followers [get]
 func SearchFollowers(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
@@ -282,6 +376,16 @@ func SearchFollowers(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// SearchFollowing retrieves the users a specific user is following.
+// @Summary Get following users
+// @Description Retrieve a list of users a specific user is following
+// @Tags Users
+// @Produce json
+// @Param userId path int true "User ID"
+// @Success 200 {array} models.User
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /users/{userId}/following [get]
 func SearchFollowing(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
@@ -309,6 +413,20 @@ func SearchFollowing(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// UpdatePassword updates a user's password.
+// @Summary Update password
+// @Description Change the password of a user
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param userId path int true "User ID"
+// @Param password body models.Password true "Password data"
+// @Success 204 "No Content"
+// @Failure 400 {object} response.ErrorResponse
+// @Failure 401 {object} response.ErrorResponse
+// @Failure 403 {object} response.ErrorResponse
+// @Failure 500 {object} response.ErrorResponse
+// @Router /users/{userId}/password [put]
 func UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	userIdToken, error := auth.ExtractUserId(r)

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/wesleywcr/dev-book/api/config"
+	_ "github.com/wesleywcr/dev-book/api/docs" // Import generated Swagger docs
 	"github.com/wesleywcr/dev-book/api/router"
 )
 
