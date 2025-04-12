@@ -10,6 +10,10 @@ import (
 	"github.com/wesleywcr/dev-book/api/router"
 )
 
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
+// @description Type "Bearer" followed by a space and JWT token.
 func main() {
 	config.Loading()
 

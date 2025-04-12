@@ -37,7 +37,7 @@ func (repository Publications) Create(publications models.Publication) (uint64, 
 
 func (repository Publications) SearchPublicationsById(publicationId uint64) (models.Publication, error) {
 	row, error := repository.db.Query(`
-	select p.*, p.nickname from 
+	select p.*, u.nickname from 
 	publications p inner join users u
 	on u.id = p.author_id where p.id = ?
 	`, publicationId)
@@ -65,14 +65,14 @@ func (repository Publications) SearchPublicationsById(publicationId uint64) (mod
 	return publication, nil
 }
 
-func (repository Publications) Search(userId uint64) ([]models.Publication, error) {
+func (repository Publications) SearchPublications(userID uint64) ([]models.Publication, error) {
 	rows, error := repository.db.Query(`
 	select distinct p.*, u.nickname from publications p
 	inner join users u on u.id = p.author_id
 	inner join followers s on p.author_id = s.user_id
 	where u.id = ? or s.follower_id = ?
-	order by 1 desc
-	`, userId, userId)
+	order by 1 desc`,
+		userID, userID)
 	if error != nil {
 		return nil, error
 	}
@@ -100,7 +100,7 @@ func (repository Publications) Search(userId uint64) ([]models.Publication, erro
 }
 
 func (repository Publications) Update(publicationId uint64, publication models.Publication) error {
-	statement, error := repository.db.Prepare("update publications set title = ?, content = ?, where id = ?")
+	statement, error := repository.db.Prepare("update publications set title = ?, content = ? where id = ?")
 	if error != nil {
 		return error
 	}

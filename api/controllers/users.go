@@ -75,6 +75,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {array} models.User
 // @Failure 500 {object} response.ErrorResponse
 // @Router /users [get]
+// @Security Bearer
 func ListUsers(w http.ResponseWriter, r *http.Request) {
 	nameOrNickname := strings.ToLower(r.URL.Query().Get("user"))
 
@@ -106,6 +107,7 @@ func ListUsers(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /users/{userId} [get]
+// @Security Bearer
 func ListUser(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
@@ -147,6 +149,7 @@ func ListUser(w http.ResponseWriter, r *http.Request) {
 // @Failure 403 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /users/{userId} [put]
+// @Security Bearer
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
@@ -212,6 +215,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 // @Failure 403 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /users/{userId} [delete]
+// @Security Bearer
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
@@ -259,6 +263,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 // @Failure 403 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /users/{userId}/follow [post]
+// @Security Bearer
 func FollowUser(w http.ResponseWriter, r *http.Request) {
 	followerId, error := auth.ExtractUserId(r)
 	if error != nil {
@@ -305,6 +310,7 @@ func FollowUser(w http.ResponseWriter, r *http.Request) {
 // @Failure 403 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /users/{userId}/unfollow [post]
+// @Security Bearer
 func UnFollowUser(w http.ResponseWriter, r *http.Request) {
 	followerId, error := auth.ExtractUserId(r)
 	if error != nil {
@@ -350,6 +356,7 @@ func UnFollowUser(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /users/{userId}/followers [get]
+// @Security Bearer
 func SearchFollowers(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
@@ -386,6 +393,7 @@ func SearchFollowers(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /users/{userId}/following [get]
+// @Security Bearer
 func SearchFollowing(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
@@ -426,7 +434,8 @@ func SearchFollowing(w http.ResponseWriter, r *http.Request) {
 // @Failure 401 {object} response.ErrorResponse
 // @Failure 403 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
-// @Router /users/{userId}/password [put]
+// @Router /users/{userId}/update-password [post]
+// @Security Bearer
 func UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	userIdToken, error := auth.ExtractUserId(r)

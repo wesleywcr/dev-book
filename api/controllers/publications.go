@@ -28,6 +28,7 @@ import (
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /publications [post]
+// @Security Bearer
 func CreatePublication(w http.ResponseWriter, r *http.Request) {
 	userId, error := auth.ExtractUserId(r)
 	if error != nil {
@@ -79,7 +80,8 @@ func CreatePublication(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /publications/{publicationId} [get]
-func GetPublications(w http.ResponseWriter, r *http.Request) {
+// @Security Bearer
+func GetPublicationsById(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 	publicationId, error := strconv.ParseUint(parameters["publicationId"], 10, 64)
 	if error != nil {
@@ -113,10 +115,11 @@ func GetPublications(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /publications [get]
-func SearchPublication(w http.ResponseWriter, r *http.Request) {
-	userId, error := auth.ExtractUserId(r)
+// @Security Bearer
+func GetPublications(w http.ResponseWriter, r *http.Request) {
+	userID, error := auth.ExtractUserId(r)
 	if error != nil {
-		response.Error(w, http.StatusBadRequest, error)
+		response.Error(w, http.StatusUnauthorized, error)
 		return
 	}
 	db, error := db.ConnectDB()
@@ -127,7 +130,7 @@ func SearchPublication(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	repository := repositories.NewRepositoryOfPublications(db)
-	publications, error := repository.Search(userId)
+	publications, error := repository.SearchPublications(userID)
 	if error != nil {
 		response.Error(w, http.StatusInternalServerError, error)
 		return
@@ -148,6 +151,7 @@ func SearchPublication(w http.ResponseWriter, r *http.Request) {
 // @Failure 403 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /publications/{publicationId} [put]
+// @Security Bearer
 func UpdatedPublication(w http.ResponseWriter, r *http.Request) {
 	userId, error := auth.ExtractUserId(r)
 	if error != nil {
@@ -219,6 +223,7 @@ func UpdatedPublication(w http.ResponseWriter, r *http.Request) {
 // @Failure 403 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /publications/{publicationId} [delete]
+// @Security Bearer
 func DeletePublication(w http.ResponseWriter, r *http.Request) {
 	userId, error := auth.ExtractUserId(r)
 	if error != nil {
@@ -270,6 +275,7 @@ func DeletePublication(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /users/{userId}/publications [get]
+// @Security Bearer
 func SearchPublicationsByUserId(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 	userId, error := strconv.ParseUint(parameters["userId"], 10, 64)
@@ -303,6 +309,7 @@ func SearchPublicationsByUserId(w http.ResponseWriter, r *http.Request) {
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
 // @Router /publications/{publicationId}/like [post]
+// @Security Bearer
 func LikePublication(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 	publicationId, error := strconv.ParseUint(parameters["publicationId"], 10, 64)
@@ -336,7 +343,8 @@ func LikePublication(w http.ResponseWriter, r *http.Request) {
 // @Success 204 "No Content"
 // @Failure 400 {object} response.ErrorResponse
 // @Failure 500 {object} response.ErrorResponse
-// @Router /publications/{publicationId}/unlike [post]
+// @Router /publications/{publicationId}/deslike [post]
+// @Security Bearer
 func DeslikePublication(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 	publicationId, error := strconv.ParseUint(parameters["publicationId"], 10, 64)

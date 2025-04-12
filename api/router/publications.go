@@ -22,7 +22,7 @@ var routesPublications = []Route{
 	{
 		URI:                   "/publications/{publicationId}",
 		Method:                http.MethodGet,
-		HandleFunction:        controllers.SearchPublication,
+		HandleFunction:        controllers.GetPublicationsById,
 		RequiredAuthorization: true,
 	},
 	{

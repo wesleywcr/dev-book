@@ -97,7 +97,7 @@ func (repository Users) SearchPerId(ID uint64) (models.User, error) {
 
 func (repository Users) Update(ID uint64, user models.User) error {
 	statement, error := repository.db.Prepare(
-		"update users set name = ?, nickname = ?, email = ?, where id = ?",
+		"update users set name = ?, nickname = ?, email = ? where id = ?",
 	)
 	if error != nil {
 		return error
